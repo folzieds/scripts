@@ -1,9 +1,9 @@
-from os import path
+import os
 from pydub import AudioSegment
 
 # file path
-src = input("In: ")
-dest = input("Out: ")
+src = "test.mp3"
+dest = "test.wav"
 
 #convert mp3 to wav
 sound = AudioSegment.from_mp3(src)
