@@ -1,4 +1,5 @@
 import docx
+import pandas as pd
 
 def get_text(filename):
     doc = docx.Document(filename)
@@ -9,7 +10,5 @@ def get_text(filename):
 
     return "\n\n".join(full_text)
 
-test = input("Enter file name:")
-file_text = get_text(test)
-
-print(file_text)
+def get_verse(full_text):
+    pd.read_csv("")
