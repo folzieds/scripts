@@ -1,4 +1,3 @@
-from typing import List
 import docx
 import pandas as pd
 import re
@@ -6,7 +5,7 @@ import re
 
 df_verse = pd.read_csv("verse.csv")
 
-def get_text(filename: str) -> List:
+def get_text(filename: str) -> list:
     doc = docx.Document(filename)
 
     full_text = []
@@ -15,19 +14,25 @@ def get_text(filename: str) -> List:
 
     return full_text
 
-def get_verse(full_text: List):
-    found = []
+def fill_verse(full_text: list) -> list:
+    filled_text = []
     for text in full_text:
         if(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text) != None):
-            found.append(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text).group())
+            temp = add_range_verse_text(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text).group())
+            filled_text.append(temp)
         elif (re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text)) != None:
-            found.append(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text).group())
+            temp = add_range_verse_text(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text).group())
+            filled_text.append(temp)
         elif(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*', text) != None):
-            found.append(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*', text).group())
+            temp = add_verse_text(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*', text).group())
+            filled_text.append(temp)
         elif (re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*', text)) != None:
-            found.append(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*', text).group())
+            temp = add_verse_text(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*', text).group())
+            filled_text.append(temp)
+        else:
+            filled_text.append(text)
         
-    return found
+    return filled_text
 
 def add_verse_text(verse: str) -> str:
     # split the verse into book chapter and verse
@@ -38,7 +43,7 @@ def add_verse_text(verse: str) -> str:
     verse_df = df_verse.loc[(df_verse['book'] == book) & (df_verse['chapter'] == chapter) & (df_verse['verse'] == ver)]
     verse_text = verse_df.iat[0,3]
 
-    return verse + " - " + verse_text
+    return f"{book} {chapter}: {ver} - {verse_text}"
 
 def add_range_verse_text(verse: str) -> str:
     # split the verse into book chapter and verse
@@ -47,15 +52,18 @@ def add_range_verse_text(verse: str) -> str:
     ver_start = int(verse[:])
     ver_end = int(verse[:])
 
+    verse_list = []
     # get the text from the dataframe
     for ver in range(ver_start,ver_end+1):
         verse_df = df_verse.loc[(df_verse['book'] == book) & (df_verse['chapter'] == chapter) & (df_verse['verse'] == ver)]
         verse_text = verse_df.iat[0,3]
+        verse_compile = f"{book} {chapter}: {ver} - {verse_text}"
+        verse_list.append(verse_compile)
 
-    return verse + " - " + verse_text
+    return "\n".join(verse_list)
 
 x = get_text("test.docx")
-y = get_verse(x)
+y = fill_verse(x)
 
 for i in y:
     print(i)
