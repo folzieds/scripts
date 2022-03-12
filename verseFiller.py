@@ -36,9 +36,13 @@ def fill_verse(full_text: list) -> list:
 
 def add_verse_text(verse: str) -> str:
     # split the verse into book chapter and verse
-    book = verse[:]
-    chapter = int(verse[:])
-    ver = int(verse[:])
+    book = ""
+    if(re.search("[0-9]*\s[a-zA-z]*",verse).group().strip() != ''):
+        book = re.search("[0-9]*\s[a-zA-z]*",verse).group().strip()
+    else:
+        book = re.search("[a-zA-z]*",verse).group().strip()
+    chapter = int(re.split("[a-zA-z]",verse.split(":",maxsplit = 2)[0])[-1].strip())
+    ver = int(verse.split(":",maxsplit = 2)[-1].strip())
     # get the text from the dataframe
     verse_df = df_verse.loc[(df_verse['book'] == book) & (df_verse['chapter'] == chapter) & (df_verse['verse'] == ver)]
     verse_text = verse_df.iat[0,3]
@@ -47,10 +51,14 @@ def add_verse_text(verse: str) -> str:
 
 def add_range_verse_text(verse: str) -> str:
     # split the verse into book chapter and verse
-    book = verse[:]
-    chapter = int(verse[:])
-    ver_start = int(verse[:])
-    ver_end = int(verse[:])
+    book = ""
+    if(re.search("[0-9]*\s[a-zA-z]*",verse).group().strip() != ''):
+        book = re.search("[0-9]*\s[a-zA-z]*",verse).group().strip()
+    else:
+        book = re.search("[a-zA-z]*",verse).group().strip()
+    chapter = int(re.split("[a-zA-z]",verse.split(":",maxsplit = 2)[0])[-1].strip())
+    ver_start = int(verse.split(":",maxsplit = 2)[1].strip().split("-")[0].strip())
+    ver_end = int(verse.split(":",maxsplit = 2)[1].strip().split("-")[1].strip())
 
     verse_list = []
     # get the text from the dataframe
