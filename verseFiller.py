@@ -19,16 +19,20 @@ def get_verse(full_text: List):
     found = []
     for text in full_text:
         if(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text) != None):
-            found.append(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text))
+            found.append(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text).group())
         elif (re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text)) != None:
-            found.append(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text))
+            found.append(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*\s-\s[1-9]*', text).group())
         elif(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*', text) != None):
-            found.append(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*', text))
+            found.append(re.search('[1-3]*\s[A-Za-z]*\s[1-9]*:\s[1-9]*', text).group())
         elif (re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*', text)) != None:
-            found.append(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*', text))
+            found.append(re.search('[A-Za-z]*\s[1-9]*:\s[1-9]*', text).group())
         
     return found
 
+def add_verse_text(verse: str) -> str:
+    # split the verse into book chapter and verse
+    # get the 
+    pass
 
 x = get_text("test.docx")
 y = get_verse(x)
