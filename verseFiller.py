@@ -31,8 +31,28 @@ def get_verse(full_text: List):
 
 def add_verse_text(verse: str) -> str:
     # split the verse into book chapter and verse
-    # get the 
-    pass
+    book = verse[:]
+    chapter = int(verse[:])
+    ver = int(verse[:])
+    # get the text from the dataframe
+    verse_df = df_verse.loc[(df_verse['book'] == book) & (df_verse['chapter'] == chapter) & (df_verse['verse'] == ver)]
+    verse_text = verse_df.iat[0,3]
+
+    return verse + " - " + verse_text
+
+def add_range_verse_text(verse: str) -> str:
+    # split the verse into book chapter and verse
+    book = verse[:]
+    chapter = int(verse[:])
+    ver_start = int(verse[:])
+    ver_end = int(verse[:])
+
+    # get the text from the dataframe
+    for ver in range(ver_start,ver_end+1):
+        verse_df = df_verse.loc[(df_verse['book'] == book) & (df_verse['chapter'] == chapter) & (df_verse['verse'] == ver)]
+        verse_text = verse_df.iat[0,3]
+
+    return verse + " - " + verse_text
 
 x = get_text("test.docx")
 y = get_verse(x)
