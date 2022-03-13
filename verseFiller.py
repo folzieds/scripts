@@ -5,34 +5,39 @@ import re
 
 df_verse = pd.read_csv("verse.csv")
 
-def get_text(filename: str) -> list:
+def fill_verse_inplace(filename: str):
     doc = docx.Document(filename)
 
-    full_text = []
     for para in doc.paragraphs:
-        full_text.append(para.text)
+        if(is_verse(para.text)):
+            para.text = fill_verse(para.text)
+            para.runs[0].bold = True
 
-    return full_text
+    doc.save(filename)
 
-def fill_verse(full_text: list) -> list:
-    filled_text = []
-    for text in full_text:
-        if(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[1-9]*\s-\s[0-9]*', text) != None):
-            temp = add_range_verse_text(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text).group())
-            filled_text.append(temp)
-        elif (re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text)) != None:
-            temp = add_range_verse_text(re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text).group())
-            filled_text.append(temp)
-        elif(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*', text) != None):
-            temp = add_verse_text(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*', text).group())
-            filled_text.append(temp)
-        elif (re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*', text)) != None:
-            temp = add_verse_text(re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*', text).group())
-            filled_text.append(temp)
-        else:
-            filled_text.append(text)
-        
-    return filled_text
+def is_verse(text: str) -> bool:
+    if(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[1-9]*\s-\s[0-9]*', text) != None):
+        return True
+    elif (re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text)) != None:
+        return True
+    elif(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*', text) != None):
+        return True
+    elif (re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*', text)) != None:
+        return True
+    else:
+        return False
+
+def fill_verse(text: str) -> str:
+    if(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[1-9]*\s-\s[0-9]*', text) != None):
+        return add_range_verse_text(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text).group())
+    elif (re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text)) != None:
+        return add_range_verse_text(re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*\s-\s[0-9]*', text).group())
+    elif(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*', text) != None):
+        return add_verse_text(re.search('[1-3]*\s[A-Za-z]*\s[0-9]*:\s[0-9]*', text).group())
+    elif (re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*', text)) != None:
+        return add_verse_text(re.search('[A-Za-z]*\s[0-9]*:\s[0-9]*', text).group())
+    else:
+        pass
 
 def add_verse_text(verse: str) -> str:
     # split the verse into book chapter and verse
@@ -70,14 +75,4 @@ def add_range_verse_text(verse: str) -> str:
 
     return "\n".join(verse_list)
 
-def export_text_to_docx(text_list :list):
-    doc = docx.Document()
-    #parse list to a single string
-    for text in text_list:
-        doc.add_paragraph(text)
-    
-    doc.save("filled.docx")
-
-x = get_text("test.docx")
-y = fill_verse(x)
-export_text_to_docx(y)
+fill_verse_inplace("test.docx")
